@@ -1,0 +1,123 @@
+:root { --bg: #0b0b0d; --panel: #16161a; --line: #333; --text: #ddd; --dim: #999; --accent: #3b82f6; color-scheme: dark; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font: 12px system-ui, sans-serif; overflow: hidden; }
+[hidden] { display: none !important; }
+button, input, select { font: inherit; }
+button { background: #24242a; color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 3px 8px; cursor: pointer; white-space: nowrap; }
+button:hover:not(:disabled) { background: #2f2f37; }
+button:disabled, input:disabled { opacity: .4; cursor: default; }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+input[type=text], select { background: #0e0e11; color: #eee; border: 1px solid var(--line); border-radius: 4px; padding: 4px 8px; box-sizing: border-box; }
+.group { display: flex; gap: 6px; align-items: center; }
+
+/* Pinned bar: takes part in the page layout. */
+body { display: flex; }
+body[data-edge=top] { flex-direction: column; }
+body[data-edge=bottom] { flex-direction: column-reverse; }
+body[data-edge=left] { flex-direction: row; }
+body[data-edge=right] { flex-direction: row-reverse; }
+
+#bar { position: relative; z-index: 10; flex: none; box-sizing: border-box; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 4px 6px; background: var(--panel); }
+#url { flex: 1; min-width: 120px; }
+#vol, #zoom { width: 110px; }
+#volLabel { width: 34px; }
+#zoomReset { width: 48px; padding: 3px 0; }
+body:is([data-edge=left], [data-edge=right]) #bar { width: 190px; flex-flow: column nowrap; align-items: stretch; }
+body:is([data-edge=left], [data-edge=right]) #url { flex: none; }
+body:is([data-edge=left], [data-edge=right]) .group { flex-wrap: wrap; }
+
+/* Auto-hide: overlays the frames so showing it never resizes them. */
+body[data-autohide=true] #bar { position: fixed; transition: transform .15s; }
+body[data-autohide=true][data-edge=top] #bar { inset: 0 0 auto; }
+body[data-autohide=true][data-edge=bottom] #bar { inset: auto 0 0; }
+body[data-autohide=true][data-edge=left] #bar { inset: 0 auto 0 0; }
+body[data-autohide=true][data-edge=right] #bar { inset: 0 0 0 auto; }
+body[data-autohide=true][data-edge=top] #bar:not(.open) { transform: translateY(-100%); }
+body[data-autohide=true][data-edge=bottom] #bar:not(.open) { transform: translateY(100%); }
+body[data-autohide=true][data-edge=left] #bar:not(.open) { transform: translateX(-100%); }
+body[data-autohide=true][data-edge=right] #bar:not(.open) { transform: translateX(100%); }
+
+/* Sticks out of the hidden bar by 6px, so it lies along the window edge. */
+#reveal { position: absolute; display: none; }
+body[data-autohide=true] #reveal { display: block; }
+body[data-edge=top] #reveal { inset: 100% 0 auto; height: 6px; }
+body[data-edge=bottom] #reveal { inset: auto 0 100%; height: 6px; }
+body[data-edge=left] #reveal { inset: 0 auto 0 100%; width: 6px; }
+body[data-edge=right] #reveal { inset: 0 100% 0 auto; width: 6px; }
+
+/* Popups */
+.popup { position: absolute; z-index: 1; padding: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+body[data-edge=top] .popup { top: 100%; }
+body[data-edge=bottom] .popup { bottom: 100%; }
+body[data-edge=left] .popup { left: 100%; top: 6px; }
+body[data-edge=right] .popup { right: 100%; top: 6px; }
+body:is([data-edge=top], [data-edge=bottom]) #picker { left: 6px; }
+body:is([data-edge=top], [data-edge=bottom]) #menu { right: 6px; }
+
+#pickerGrid { display: grid; grid-template-columns: repeat(4, 26px); gap: 4px; }
+#pickerGrid button { width: 26px; height: 20px; padding: 0; }
+#pickerGrid button.on { background: var(--accent); border-color: var(--accent); }
+#pickerLabel { margin-top: 6px; text-align: center; }
+
+#menu { width: min(340px, calc(100vw - 30px)); box-sizing: border-box; max-height: min(520px, calc(100vh - 60px)); overflow-y: auto; }
+body:is([data-edge=left], [data-edge=right]) #menu { width: min(340px, calc(100vw - 210px)); }
+#tabs { display: flex; gap: 4px; margin-bottom: 10px; }
+#tabs button { flex: 1; }
+#tabs button[aria-selected=true] { border-color: var(--accent); box-shadow: inset 0 -2px 0 var(--accent); }
+#menu form { display: flex; gap: 6px; flex: 1; min-width: 0; }
+#menu form input { flex: 1; min-width: 0; }
+#menu ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+#menu li { display: flex; gap: 4px; }
+#menu .name, #menu .entry { flex: 1; min-width: 0; text-align: left; overflow: hidden; text-overflow: ellipsis; }
+#menu .entry { cursor: grab; touch-action: none; user-select: none; }
+#menu .entry > * { display: block; overflow: hidden; text-overflow: ellipsis; }
+#menu .entry small { color: var(--dim); }
+.msg { min-height: 1.4em; margin: 4px 0; color: var(--text); overflow-wrap: anywhere; }
+.empty { margin: 4px 0; color: var(--dim); }
+#clearHistory { margin-top: 8px; }
+#paneSettings label { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 5px 0; }
+#paneSettings input { accent-color: var(--accent); }
+
+dialog { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 16px 20px; max-width: 380px; overflow-wrap: anywhere; }
+dialog::backdrop { background: rgb(0 0 0 / .5); }
+dialog .group { justify-content: flex-end; margin-top: 14px; }
+
+/* Frames */
+#grid { position: relative; flex: 1; min-width: 0; min-height: 0; overflow: hidden; }
+.cell { position: absolute; overflow: hidden; background: #000; }
+.cell iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #fff; }
+.cell .outline { position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 0 2px var(--accent); opacity: 0; transition: opacity .3s; }
+.cell.selected .outline { opacity: 1; }
+.cell.selected.idle .outline { opacity: 0; }
+.cell .strip { position: absolute; inset: 0 0 auto; height: 8px; display: none; }
+.cell.noscript .strip { display: block; }
+.cell .corner { display: flex; gap: 4px; position: absolute; top: 6px; right: 6px; visibility: hidden; opacity: 0; transition: opacity .15s, visibility .15s; }
+.cell.corner-on .corner { visibility: visible; opacity: 1; }
+.cell .corner button { width: 28px; height: 28px; padding: 0; background: rgb(22 22 26 / .9); }
+.cell .corner button:hover { background: #b91c1c; }
+.cell .corner .grip { cursor: grab; touch-action: none; }
+.cell .corner .grip:hover { background: #2f2f37; }
+.blank { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 6px; align-items: center; justify-content: center; background: #121216; cursor: grab; touch-action: none; user-select: none; }
+.blank input { width: min(80%, 420px); }
+.blank .error { height: 1.3em; color: #f87171; }
+.crashed { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 10px; align-items: center; justify-content: center; background: #121216; }
+.crashed .all { display: none; }
+.several-crashed .crashed .all { display: block; }
+.cell.drop .blank { background: color-mix(in srgb, var(--accent) 25%, #121216); }
+
+#dividers { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.divider { position: absolute; pointer-events: auto; cursor: row-resize; touch-action: none; }
+.divider.vertical { cursor: col-resize; }
+.divider .tab { position: absolute; width: 44px; height: 8px; border-radius: 4px; background: var(--accent); transform: translate(-50%, -50%); opacity: 0; transition: opacity .15s; pointer-events: none; }
+.divider.vertical .tab { width: 8px; height: 44px; }
+.divider.hot .tab { opacity: 1; }
+
+/* Where a dragged frame would go */
+#preview { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+#preview div { position: absolute; box-sizing: border-box; border: 1px dashed color-mix(in srgb, var(--accent) 70%, white); }
+#preview div.moved { border: 2px solid var(--accent); background: color-mix(in srgb, var(--accent) 40%, transparent); }
+#preview div.refused { border: 2px dashed #b91c1c; background: rgb(185 28 28 / .25); }
+
+/* Dragging */
+#shield { position: fixed; inset: 0; z-index: 20; cursor: grabbing; }
+.ghost { position: fixed; left: 0; top: 0; z-index: 21; max-width: 260px; padding: 4px 8px; background: var(--panel); border: 1px solid var(--accent); border-radius: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; pointer-events: none; }
+body.dragging .popup, body.dragging[data-autohide=true] #bar { opacity: 0; }

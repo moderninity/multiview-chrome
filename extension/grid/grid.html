@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>MultiView</title>
+  <link rel="stylesheet" href="grid.css">
+</head>
+<body data-edge="top" data-autohide="true">
+  <header id="bar">
+    <div class="group">
+      <button id="new">New frame</button>
+      <button id="layoutBtn">Layout</button>
+    </div>
+    <input id="url" type="text" placeholder="Select a frame" spellcheck="false" aria-label="Address of selected frame">
+    <div class="group">
+      <button id="back" title="Back" aria-label="Back">◀</button>
+      <button id="fwd" title="Forward" aria-label="Forward">▶</button>
+      <button id="reload" title="Reload" aria-label="Reload">⟳</button>
+    </div>
+    <div class="group">
+      <input id="vol" type="range" min="0" max="100" value="100" title="Volume" aria-label="Volume">
+      <span id="volLabel">100%</span>
+      <button id="mute">Mute</button>
+    </div>
+    <div class="group">
+      <span>Zoom</span>
+      <input id="zoom" type="range" min="100" max="400" value="100" aria-label="Zoom">
+      <button id="zoomReset" title="Reset zoom">100%</button>
+    </div>
+    <div class="group">
+      <button id="close">Close frame</button>
+      <button id="menuBtn">⚙ Settings</button>
+    </div>
+
+    <div id="picker" class="popup" hidden><div id="pickerGrid"></div><div id="pickerLabel"></div></div>
+
+    <div id="menu" class="popup" hidden>
+      <div id="tabs" role="tablist">
+        <button role="tab" data-pane="panePresets">Presets</button>
+        <button role="tab" data-pane="paneHistory">History</button>
+        <button role="tab" data-pane="paneSettings">Settings</button>
+      </div>
+
+      <section id="panePresets">
+        <form id="presetForm">
+          <input id="presetName" type="text" maxlength="60" placeholder="Name for the current layout" aria-label="Preset name">
+          <button>Save</button>
+        </form>
+        <div id="presetMsg" class="msg" role="status"></div>
+        <ul id="presetList"></ul>
+        <p id="presetEmpty" class="empty">No presets saved yet.</p>
+      </section>
+
+      <section id="paneHistory" hidden>
+        <p class="empty">Drag a page onto a blank frame. Cleared when the browser closes.</p>
+        <div id="historyMsg" class="msg" role="status"></div>
+        <ul id="historyList"></ul>
+        <p id="historyEmpty" class="empty">Nothing opened yet.</p>
+        <button id="clearHistory">Clear history</button>
+      </section>
+
+      <section id="paneSettings" hidden>
+        <label>Bar position
+          <select id="setEdge">
+            <option value="top">Top</option><option value="bottom">Bottom</option>
+            <option value="left">Left</option><option value="right">Right</option>
+          </select>
+        </label>
+        <label>Hide the bar automatically <input id="setAutoHide" type="checkbox"></label>
+        <label>Ask before a preset replaces frames <input id="setConfirm" type="checkbox"></label>
+        <label>Fade the selection outline after
+          <select id="setIdle">
+            <option value="15">15 seconds</option><option value="30">30 seconds</option>
+            <option value="60">1 minute</option><option value="300">5 minutes</option>
+            <option value="0">Never</option>
+          </select>
+        </label>
+        <label>Accent colour <input id="setAccent" type="color"></label>
+      </section>
+    </div>
+
+    <div id="reveal"></div>
+  </header>
+
+  <main id="grid"><div id="dividers"></div><div id="preview"></div></main>
+  <div id="shield" hidden></div>
+
+  <dialog id="confirm" aria-labelledby="confirmText">
+    <form method="dialog">
+      <p id="confirmText"></p>
+      <label><input id="dontAsk" type="checkbox"> Don't ask again</label>
+      <div class="group">
+        <button value="replace">Replace</button>
+        <button value="cancel" autofocus>Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="grid.js"></script>
+</body>
+</html>
